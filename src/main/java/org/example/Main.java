@@ -14,7 +14,7 @@ public class Main {
         Optional<Integer> sum = Optional.ofNullable(maxSumSubarray(arr,3));
 
         String strArr = "abcdefadj";
-
+        String p = "[()]";
         Optional<HashMap<Character,Integer>> optionalHashMap = Optional.ofNullable(countChar(strArr));
         Optional<Integer> maxLength = Optional.ofNullable(uniqueSubString(strArr));
 
@@ -26,6 +26,7 @@ public class Main {
         LocationObj userLocation = new LocationObj(1.7,3.5);
         nearestDriver(locationObjs,userLocation);
 
+        System.out.println("valid parenthesis: " + validParenthesis(p));
 
         if(result.isPresent()){
             System.out.println(Arrays.stream(result.get()).toList());
@@ -126,7 +127,7 @@ public class Main {
     }
 
     // Haversine formula to calculate the distance between two points on the Earth's surface
-    public static double haversine(double lat1, double lon1, double lat2, double lon2) {
+    private static double haversine(double lat1, double lon1, double lat2, double lon2) {
         final int R = 6371; // Earth's radius in kilometers
         double latDistance = Math.toRadians(lat2 - lat1);
         double lonDistance = Math.toRadians(lon2 - lon1);
@@ -137,6 +138,29 @@ public class Main {
 
         double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
         return R * c; // Distance in kilometers
+    }
+
+    private static Boolean validParenthesis(String s){
+        if(s.length() <1){
+            return true;
+        }
+        char[] pattern = {'(',')','[',']','{','}'};
+        HashMap<Character,Integer> map = new HashMap<Character, Integer>();
+        for(int i =0; i< s.length(); i++){
+            for(int j=0; j < pattern.length; j++){
+                if(s.charAt(i) == pattern[j]){
+                    if(map.containsKey(s.charAt(i))){
+                        map.put(pattern[j],map.get(pattern[j]) + 1);
+                    }else{
+                        map.put(pattern[j],1);
+                    }
+                    break;
+                }
+            }
+        }
+        Boolean isNotValid = map.values().stream().anyMatch(i -> i % 2 != 0);
+
+        return !isNotValid;
     }
 }
 
