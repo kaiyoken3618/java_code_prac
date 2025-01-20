@@ -1,6 +1,10 @@
 package org.example;
 
+import org.example.entity.LocationObj;
+
 import java.util.*;
+import java.util.stream.Collectors;
+
 
 public class Main {
     public static void main(String[] args) {
@@ -13,6 +17,16 @@ public class Main {
 
         Optional<HashMap<Character,Integer>> optionalHashMap = Optional.ofNullable(countChar(strArr));
         Optional<Integer> maxLength = Optional.ofNullable(uniqueSubString(strArr));
+
+        List<LocationObj> locationObjs = new ArrayList<>();
+        locationObjs.add(new LocationObj(1.2,3.2));
+        locationObjs.add(new LocationObj(2.2,4.2));
+        locationObjs.add(new LocationObj(0.1,0.05));
+
+        LocationObj userLocation = new LocationObj(1.7,3.5);
+        nearestDriver(locationObjs,userLocation);
+
+
         if(result.isPresent()){
             System.out.println(Arrays.stream(result.get()).toList());
         }
@@ -96,6 +110,33 @@ public class Main {
             maxLength = Math.max(maxLength,right-left+1);
         }
         return maxLength;
+    }
+
+    private static void nearestDriver(List<LocationObj> locationObjs, LocationObj locationObj){
+        Double min = Double.MAX_VALUE;
+        LocationObj result = new LocationObj();
+        for (LocationObj locationObj1 : locationObjs) {
+            Double currentMin = haversine(locationObj1.getLatitude(), locationObj1.getLatitude(), locationObj.getLatitude(), locationObj.getLongitude());
+            if (currentMin < min) {
+                min = currentMin;
+                result= locationObj1;
+            }
+        }
+        System.out.println("nearest locaton lat: " + result.getLatitude() + " & lon: "  + result.getLongitude());
+    }
+
+    // Haversine formula to calculate the distance between two points on the Earth's surface
+    public static double haversine(double lat1, double lon1, double lat2, double lon2) {
+        final int R = 6371; // Earth's radius in kilometers
+        double latDistance = Math.toRadians(lat2 - lat1);
+        double lonDistance = Math.toRadians(lon2 - lon1);
+
+        double a = Math.sin(latDistance / 2) * Math.sin(latDistance / 2)
+                + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2))
+                * Math.sin(lonDistance / 2) * Math.sin(lonDistance / 2);
+
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return R * c; // Distance in kilometers
     }
 }
 
