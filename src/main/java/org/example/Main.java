@@ -14,7 +14,7 @@ public class Main {
         Optional<Integer> sum = Optional.ofNullable(maxSumSubarray(arr,3));
 
         String strArr = "abcdefadj";
-        String p = "[()]";
+        String p = "()";
         Optional<HashMap<Character,Integer>> optionalHashMap = Optional.ofNullable(countChar(strArr));
         Optional<Integer> maxLength = Optional.ofNullable(uniqueSubString(strArr));
 
@@ -27,6 +27,7 @@ public class Main {
         nearestDriver(locationObjs,userLocation);
 
         System.out.println("valid parenthesis: " + validParenthesis(p));
+        System.out.println("actual valid parenthesis: " + concurrentValidParenthesis(p));
 
         if(result.isPresent()){
             System.out.println(Arrays.stream(result.get()).toList());
@@ -141,6 +142,7 @@ public class Main {
     }
 
     private static Boolean validParenthesis(String s){
+        Boolean flag = false;
         if(s.length() <1){
             return true;
         }
@@ -158,9 +160,68 @@ public class Main {
                 }
             }
         }
-        Boolean isNotValid = map.values().stream().anyMatch(i -> i % 2 != 0);
+        System.out.println("Key: "+ "value");
 
-        return !isNotValid;
+        map.keySet().stream().forEach(key -> {
+            System.out.println(key.toString() +"  : " + map.get(key).toString());
+        });
+        HashMap<String,Boolean> res = new HashMap<>();
+        if((map.containsKey('(') && map.containsKey(')')) && ((map.get('(') == map.get(')')))){
+            res.put("first bracket", true);
+        } else if ((!map.containsKey('(') && !map.containsKey(')'))) {
+            res.put("first bracket", true);
+        } else {
+            res.put("first bracket", false);
+
+        }
+        if((map.containsKey('{') && map.containsKey('}')) && ((map.get('{') == map.get('}')))){
+            res.put("second bracket", true);
+        } else if ((!map.containsKey('{') && !map.containsKey('}'))) {
+            res.put("second bracket", true);
+        } else {
+            res.put("second bracket", false);
+        }
+        if((map.containsKey('[') && map.containsKey(']')) && ((map.get('[') == map.get(']')))){
+            res.put("third bracket", true);
+        } else if ((!map.containsKey('[') && !map.containsKey(']'))) {
+            res.put("third bracket", true);
+        } else {
+            res.put("third bracket", false);
+
+        }
+        System.out.println("result");
+
+        System.out.println("Key: "+ "value");
+
+        res.keySet().stream().forEach(key -> {
+            System.out.println(key +"  : " + res.get(key));
+        });
+        flag = res.values().stream().allMatch(x -> x);
+
+        return flag;
+    }
+
+    private static Boolean concurrentValidParenthesis(String s){
+        Stack<Character> stack = new Stack<>();
+        for(char c: s.toCharArray()){
+            if(c == '(' || c == '{' || c == '['){
+                stack.push(c);
+            }
+            else{
+                if (stack.isEmpty()) return false;
+                char open = stack.pop();
+                if(c == ')' && open!= '('){
+                    return false;
+                }
+                if(c == '}' && open!= '{'){
+                    return false;
+                }
+                if(c == ']' && open!= '['){
+                    return false;
+                }
+            }
+        }
+        return stack.empty();
     }
 }
 
